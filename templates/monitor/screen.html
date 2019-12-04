@@ -1,0 +1,87 @@
+{% extends 'monitor/base.html' %}
+
+{% block show_content %}
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/scree.css' %}">
+    <!-- 条件筛选 -->
+    <div class="condition_screen">
+        <span>粉丝数量：</span>
+        <ul>
+            <li>小于1万</li>
+            <li>1万～5万</li>
+            <li class="active">5万～10万</li>
+            <li>大于10万</li>
+        </ul>
+        <br />
+        <span>用户标签：</span>
+        <ul>
+            <li class="active">明星</li>
+            <li>专家</li>
+            <li>兴趣</li>
+            <li>机构</li>
+        </ul>
+        <br />
+        <span>时间筛选：</span>
+        <ul>
+            <li>近3日</li>
+            <li>近7日</li>
+            <li>近10日</li>
+            <li class="active">近30日</li>
+        </ul>
+        <button>筛 选</button>
+    </div>
+
+    <div class="content">
+        <div class="result">
+            <span> 根据您的条件，为您筛选出<span class="num">1230</span>条舆情</span>
+            <input type="text" placeholder="请输入关键字">
+            <button class="glyphicon glyphicon-search search"></button>
+            <span ></span>
+        </div>
+        <ul class="select">
+            <li><a>用户列表</a></li>
+            <li>|</li>
+            <li><a>微博列表</a></li>
+        </ul>
+        <div class="user_li">
+            <table>
+                <tr>
+                    <th>序号</th>
+                    <th>微博名称</th>
+                    <th>性别</th>
+                    <th>简介</th>
+                    <th>粉丝数量</th>
+                    <th>标签</th>
+                    <th>文章数量</th>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>小明</td>
+                    <td>男</td>
+                    <td>美食博主</td>
+                    <td>123456</td>
+                    <td>美食</td>
+                    <td>6</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>小红</td>
+                    <td>女</td>
+                    <td>美妆博主</td>
+                    <td>66666</td>
+                    <td>化妆、护肤、美女</td>
+                    <td>10</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>小军</td>
+                    <td>男</td>
+                    <td>健身达人</td>
+                    <td>88888</td>
+                    <td>健身、饮食、健美</td>
+                    <td>8</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,119 @@
+/*条件筛选*/
+.condition_screen{
+    width: 100%;
+    height: 28%;
+    padding-top: 20px;
+    background-color: #fff;
+}
+.condition_screen ul{
+    list-style: none;
+    font-size: 0;
+    padding: 0;
+    display: inline-block;
+    border: 1px solid rgb(238,239,241);
+}
+.condition_screen span{
+    font-size: 12px;
+    margin-left: 30px;
+}
+.condition_screen li{
+    width: 105px;
+    height: 30px;
+    display: inline-block;
+    border-left: 1px solid rgb(238,239,241);
+    line-height: 30px;
+    font-size: 12px;
+    text-align: center;
+    cursor: pointer;
+}
+.condition_screen ul li:nth-child(1){
+    border-left: 0px solid rgb(238,239,241);
+}
+.condition_screen li:hover{
+    color: #fff;
+    background-color: rgb(84,192,110);
+}
+.condition_screen .active{
+    color: #fff;
+    font-weight: bold;
+    background-color: rgb(84,192,110);
+}
+.condition_screen button{
+    width: 100px;
+    height: 30px;
+    background-color: rgb(84,192,110);
+    color: #fff;
+    float: right;
+    margin-right: 50px;
+    border-radius: 10%
+}
+.content{
+    width: 97%;
+    height: 69%;
+    margin: 10px auto 0;
+    background-color: #fff;
+    overflow: hidden;
+}
+.result{
+    height: 20%;
+    line-height: 80px;
+    border-bottom: 1px solid #ddd;
+}
+.result span{
+    font-size: 12px;
+    color: rgb(80,90,101);
+    letter-spacing: 1px;
+    margin-left: 25px;
+}
+.result .num{
+    color: rgb(84,192,110);
+    letter-spacing: 0px;
+    margin:0 5px 0;
+}
+.result input{
+    width: 150px;
+    height: 25px;
+    margin: 32px 40px;
+    float: right;
+}
+.search{
+    height: 25px;
+    margin: 31px -190px;
+    float: right;
+}
+.select{
+    padding: 0;
+    margin-left: 20px;
+    list-style: none;
+    font-size: 0px;
+}
+.select li{
+    width: 65px;
+    font-size: 14px;
+    line-height: 50px;
+    display: inline-block;
+    text-align: center;
+
+}
+.select a{
+    cursor: pointer;
+}
+.select a:hover{
+    color: red;
+    text-decoration: none;
+}
+.user_li{
+    margin-top: 20px;
+}
+.user_li table{
+    color: rgb(80,90,101);
+    font-size: 14px;
+    text-align: center;
+    line-height: 30px;
+    margin-top: -28px;
+}
+.user_li table th{
+    text-align: center;
+    line-height: 38px;
+    width: 4%;
+}

@@ -1,0 +1,75 @@
+/*排行榜*/
+.ranking_list{
+    width: 96%;
+    height: 96%;
+    margin: 10px auto;
+    background-color: #fff;
+    overflow: hidden;
+    position: relative;
+}
+.ranking_list span{
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 70px;
+    margin-left: 20px;
+}
+.ranking_list .help{
+    font-weight: normal;
+    color: rgb(230,232,235);
+    margin-left: 10px;
+    cursor: pointer;
+    line-height: 0px;
+}
+.ranking_list .help:hover{
+    color: rgb(84,192,110);
+}
+.ranking_list hr{
+    margin-top: -5px;
+}
+.ranking_list img{
+    margin: 30px 145px;
+}
+.introduce{
+    position: absolute;
+    left: 32px;
+    top: 58px;
+}
+.triangle{
+    position: absolute;
+    margin: -20px 32px
+}
+.triangle:before,.triangle:after{
+    position: absolute;
+    content: '';
+    border-top: 10px transparent dashed;
+    border-left: 10px transparent dashed;
+    border-right: 10px transparent dashed;
+}
+.triangle:before{
+    border-bottom: 10px #eee solid;
+}
+.triangle:after{
+    top: 1px; /*覆盖并错开1px*/
+    border-bottom: 10px #fff solid;
+}
+.con{
+    width: 270px;
+    height: 148px;
+    background-color: #fff;
+    border: 1px solid #eee;
+    box-shadow: 0px 2px 10px 2px #ada4a4e6;
+}
+.con span{
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 35px;
+    margin-left: 20px;
+    padding: 0;
+}
+.con p{
+    color: #675e5ead;
+    font-size: 12px;
+    text-indent: 24px;
+    margin-top: -8px;
+    padding: 10px
+}

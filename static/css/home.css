@@ -1,0 +1,43 @@
+/*首页*/
+.home_page{
+    width: 96%;
+    height: 96%;
+    margin: 10px auto;
+    background-color: #fff;
+    /*overflow: hidden;*/
+    position: relative;
+}
+.home_page span{
+    font-size: 24px;
+    color: red;
+    font-style: italic;
+    font-weight: bold;
+    line-height: 70px;
+    margin-left: 40px;
+}
+.home_page p{
+    font-size: 16px;
+    text-indent: 28px;
+    margin: 0;
+    padding:2px 30px;
+    color: #867676;
+}
+.home_page img{
+    width: 300px;
+    height: 300px;
+    float: right;
+    margin: -7px 50px 0 30px
+}
+.home_page ul{
+    list-style: none;
+    margin: 15px 0 0 530px;
+}
+.home_page li{
+    color: rgb(63,169,251);
+    text-indent: 28px;
+}
+.home_page li:nth-child(1){
+    color: #867676;
+    font-weight: bold;
+    text-indent: 0;
+}
