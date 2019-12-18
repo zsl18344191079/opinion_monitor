@@ -35,7 +35,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'MBlog',
+    'rest_framework',
+    'MBlog.apps.MblogConfig',
     'monitor',
 ]
 

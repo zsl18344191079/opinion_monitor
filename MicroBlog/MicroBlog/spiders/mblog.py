@@ -74,6 +74,7 @@ class MblogSpider(scrapy.Spider):
         category = response.meta['category']
         profile = response.meta['profile']
         address = response.meta['address']
+        time_flag = 0
 
         # 下次请求所需参数
         domain = re.findall(r"\$CONFIG\['domain'\]='(.*?)';", home_html)[0]
@@ -104,8 +105,10 @@ class MblogSpider(scrapy.Spider):
             home_html)
         for i in micro_blog_list:
             data = analyse(i, 1)
+            if data['time'] is False:
+                time_flag += 1
+                continue
             item = MicroblogItem()
-            item['name'] = name
             item['time'] = data['time']
             item['content'] = data['micro_blog']
             item['forward_num'] = data['forward_num']
@@ -114,20 +117,17 @@ class MblogSpider(scrapy.Spider):
             item['forward_content'] = data['forward_micro_blog']
             yield item
 
-        # 访问第一页最后15条，pagebar=1 匹配一页的最后15条微博。以及页数
-        anchor_url = 'https://weibo.com/p/aj/v6/mblog/mbloglist?domain={}&is_all=1&pagebar=1&id={}' \
-                     '&page=1&pre_page=1'.format(domain, pg_id)
-        data = {
-            'domain': domain,
-            'flag': True,
-            'name': name,
-            'pg_id': pg_id
-        }
-        yield scrapy.Request(url=anchor_url, meta=data,
+        if time_flag >= 2:
+            return
+        anchor_url = 'https://weibo.com/p/aj/v6/mblog/mbloglist?domain={}&is_all=1&id={}'.format(domain, pg_id)
+        # 访问第一页中间15条
+        mid_url = anchor_url + '&pagebar=0&page=1&pre_page=1'
+        yield scrapy.Request(url=mid_url, meta={'flag': 3, 'page': 1, 'anchor_url': anchor_url, 'name': name},
                              callback=self.micro_next,
                              dont_filter=True)
 
     def micro_next(self, response):
+        time_flag = 0
         home_html = response.text
         name = response.meta['name']
         # 这里的数据格式为json{"code":"100000","msg":"","data":"*****需要的******"}
@@ -142,8 +142,10 @@ class MblogSpider(scrapy.Spider):
 
         for i in micro_blog_list:
             data = analyse(i, 2)
+            if data['time'] is False:
+                time_flag += 1
+                continue
             item = MicroblogItem()
-            item['name'] = name
             item['time'] = data['time']
             item['content'] = data['micro_blog']
             item['forward_num'] = data['forward_num']
@@ -152,26 +154,38 @@ class MblogSpider(scrapy.Spider):
             item['forward_content'] = data['forward_micro_blog']
             yield item
 
-        flag = response.meta['flag']
-        if flag:
-            domain = response.meta['domain']
-            pg_id = response.meta['pg_id']
-            # 页数
-            page = re.findall(r'<div action-type="feed_list_page_morelist".*?>.*?<a.*?>.*?(\d+).*?</a>', json_data)
-            anchor_url = 'https://weibo.com/p/aj/v6/mblog/mbloglist?domain={}&is_all=1&id={}'.format(domain, pg_id)
-            for i in range(1, int(page[0]) + 1):
-                if i == 1:
-                    # 访问第一页中间15条
-                    url = anchor_url + '&pagebar=0&page=1&pre_page=1'
-                    yield scrapy.Request(url=url, meta={'flag': False, 'name': name}, callback=self.micro_next,
+        if time_flag != 0:
+            return
+        else:
+            flag = response.meta['flag']
+            page = response.meta['page']
+            anchor_url = response.meta['anchor_url']
+            data = {
+                'page': page,
+                'name': name,
+                'anchor_url': anchor_url,
+            }
+            if flag == 1:
+                # 下一页
+                next = re.findall('<a action-type="login" class="page next S_txt1 S_line1".*?>(.*?)</a>', json_data)
+                if next:
+                    url = anchor_url + '&page={}'.format(page + 1)
+                    data['flag'] = 2
+                    data['page'] += 1
+                    yield scrapy.Request(url=url, meta=data,
+                                         callback=self.micro_next,
                                          dont_filter=True)
                 else:
-                    # 没有prepage，访问前15条
-                    url = anchor_url + '&page={}'.format(i)
-                    yield scrapy.Request(url=url, meta={'flag': False, 'name': name}, callback=self.micro_next,
-                                         dont_filter=True)
-                    # prepage与page相等，pagebar=0访问中间15条，=1访问后面15条。
-                    for pg in range(2):
-                        url = anchor_url + '&pagebar={}&page={}&pre_page={}'.format(pg, i, i)
-                        yield scrapy.Request(url=url, meta={'flag': False, 'name': name}, callback=self.micro_next,
-                                             dont_filter=True)
+                    return
+            elif flag == 2:
+                url = anchor_url + '&pagebar=0&page={}&pre_page={}'.format(page, page)
+                data['flag'] = 3
+                yield scrapy.Request(url=url, meta=data,
+                                     callback=self.micro_next,
+                                     dont_filter=True)
+            elif flag == 3:
+                url = anchor_url + '&pagebar=1&page={}&pre_page={}'.format(page, page)
+                data['flag'] = 1
+                yield scrapy.Request(url=url, meta=data,
+                                     callback=self.micro_next,
+                                     dont_filter=True)

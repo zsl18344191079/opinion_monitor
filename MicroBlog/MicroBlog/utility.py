@@ -47,15 +47,14 @@ def select_pattern(flag):
 
 def analyse(i, flag):
     mb, fmb, fi, fc, tm, fn, cn, ln = select_pattern(flag)
+    # 微博时间
+    time = tm.findall(i)
     # 微博
     micro_blog = mb.findall(i)
     micro_blog = re.sub('<.*?>', '', micro_blog[0]).replace(r'\n', '').replace('&nbsp;', '').strip().replace(
         '\u200b', '').replace(r'\\', '')
-
     # 转发别人的微博
     forward_micro_blog = fmb.findall(i)
-    # 微博时间
-    time = tm.findall(i)
     # 转发数
     forward_num = fn.findall(i)
     # 评论数
@@ -119,6 +118,8 @@ def time_format(time):
         t = now - timedelta(minutes=minutes)
     elif '月' in time:
         t = datetime.strptime(time, '%m月%d日 %H:%M').replace(datetime.today().year)
+    else:
+        return False
     if t:
         time = t.strftime('%Y-%m-%d %H:%M')
     return time
