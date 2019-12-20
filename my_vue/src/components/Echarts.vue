@@ -1,7 +1,6 @@
 <template>
 	<div>
-		{{user_list}}
-		<span v-if="user_list.length==0">暂无数据，请先筛选数据！</span>
+		<span v-if="user_list.length==0" style="margin-left:410px">暂无数据，请先筛选数据！</span>
 		<div id="myChart" v-if="user_list.length!=0"></div>
 	</div>
 
@@ -15,24 +14,23 @@ export default {
 			con_list:[],
 		}
 	},
-
 	mounted(){
 		this.getData()
-		alert("this.user_list : "+this.user_list)
-		this.drawLine()
 	},
 	methods: {
-		getData(){
-			this.$axios.get("api/rank")
+		async getData(){
+			await this.$axios.get("api/rank")
 				.then(response => {
-					// this.$set(this.user_list,'a',response.data.message);
 					this.user_list = (response.data.message);
 					this.con_list = (response.data.con);
 				}).catch(err => {                 //请求失败后的处理函数
 					console.log(err)
 				});
+
+			this.drawLine()
 		},
 		drawLine(){
+			// 可视化函数
 			var myChart = this.$echarts.init(document.getElementById('myChart'));
 			var option = {
 				title: {
@@ -59,7 +57,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 	#myChart{
 		width:850px;
 		height:450px;

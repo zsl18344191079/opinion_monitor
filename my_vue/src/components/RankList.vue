@@ -3,28 +3,86 @@
 		<div class="ranking_list">
 			<span>{{title}}</span>
 			<span class="glyphicon glyphicon-question-sign help" @mouseenter="onMouseOver" @mouseleave="onMouseOut"></span>		
-			<div class="introduce">
+			<div class="introduce" v-if="seen">
 				<i class="triangle" v-if="seen"></i>
-				<div class="con" v-if="seen">
+				<div class="con" >
 					<span>{{title}}</span>
 					<p>{{introduce}}</p>
 				</div>
-			</div>				
-			<hr>			
+			</div>
+			<i class="el-icon-refresh refresh" title="点击刷新页面" v-if="ref1" @click="refresh"></i>
+			<i class="el-icon-loading refresh" title="刷新ing...." v-if="ref2"></i>
+			<hr>
+
+			<div class="show">
+				<span><a @click="show_e()">图像展示</a></span>
+				<span>|</span>
+				<span><a @click="show_u()">相关用户</a></span>
+				<br>	
+
+				<span v-if="user_list.data=='none'" style="margin-left:410px">暂无数据，请先筛选数据！</span>
+				<div id="myChart" style="width:850px;height:450px;margin-left:50px" v-show="user_list.data!='none' &&show_echar"></div>
+				<user-list v-show="show_use&&user_list.data!='none'"
+					:userli="user_list"
+					:conli="con_list"
+				></user-list>		
+			</div>	 			
 		</div> 
 </template>
 
 <script>
+import userlist from "./UserShow.vue" 
+import VueEvent from "../model/VueEvent.js" // 引入广播实例
+import storage from "../model/storage.js" 
 
 export default {
 	data(){
 		return{
-			seen:false
+			seen:false,
+			ref1:true,
+			ref2:false,
+			show_echar:true,
+			show_use:false,
+			user_list:{data:"none"}, //用户
+			data_list:[], //用户相关数据（eg:影响力、活跃度）
+			con_list:{}, //用户微博
 		}
 	},
 	props:{
 		title:String,
-		introduce:String
+		introduce:String,
+		url:String,
+		drawPicture:Function,
+		screen:String
+	},
+	components: {
+		'user-list':userlist
+  },
+	created(){
+		VueEvent.$on('if_screened',(value)=>{
+			this.if_screened = value
+		})
+		
+	},
+	mounted(){
+		// var user_list = storage.get('rank_user');
+		// if(user_list){
+		// 	this.user_list = user_list;			
+		// }
+		// var data_list = storage.get('rank_data');
+		// if(data_list){
+		// 	this.data_list = data_list
+		// }
+		// var con_list = storage.get('rank_con');
+		// if(con_list){
+		// 	this.con_list = con_list;
+		// }
+
+		// 只有进行筛选后才会请求数据并渲染图像
+		var if_screened = storage.get('if_screened');
+		if(if_screened){
+			this.getData()
+		}
 	},
 	methods:{
 		onMouseOver(){
@@ -32,14 +90,49 @@ export default {
 		},
 		onMouseOut(){
 			this.seen = false
-		}
+		},
+		refresh(){
+			if(!this.if_screened){
+				alert("暂无数据，请先筛选数据！")
+			}else{
+				this.ref1=false
+				this.ref2=true
+				setTimeout(() =>{
+					this.ref1=true
+					this.ref2=false
+					},1000);
+				this.getData()
+			}			
+		},
+		show_e(){
+			this.show_use=false;
+			this.show_echar=true;
+		},
+		show_u(){
+			this.show_echar=false;
+			this.show_use=true;
+		},
+		async getData(){
+			await this.$axios.get(this.url,{params: {screen: this.screen,}})
+				.then(response => {
+					this.user_list = (response.data.user_li);
+					this.data_list = (response.data.data_li);
+					this.con_list = (response.data.con);
+
+					// storage.set('rank_user', this.user_list);
+					// storage.set('rank_data', this.data_list);
+					// storage.set('rank_con', this.con_list);
+				}).catch(err => {                 //请求失败后的处理函数
+					console.log(err)
+				});
+
+			this.drawPicture(this.user_list.name, this.data_list)
+		},
 	},
-	components: {
-  }
 }
 </script>
 
-<style >
+<style scoped>
 /*排行榜*/
 .ranking_list{
 	width: 96%;
@@ -116,10 +209,26 @@ export default {
 	margin-top: -8px;
 	padding: 10px
 }
-.echarts{
-	margin:-10px 23px 10px;
+.refresh{
+	position: absolute;
+    top: 26px;
+    right: 50px;
+    font-size: 25px;
+    color: rgb(84,192,110);
+    cursor: pointer;
+}
+.show{
 	background-color: #fff;
-	padding-left:125px;
-	padding-bottom:20px;
+	margin: -10px 23px 0;
+}
+.show span{
+	line-height:20px;
+	font-size:15px;
+	font-weight:normal;
+}
+.show span a{
+	text-decoration:none;
+	cursor: pointer;
+	font-size:14px
 }
 </style>

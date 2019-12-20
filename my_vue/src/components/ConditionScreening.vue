@@ -3,10 +3,10 @@
 		<div class="condition_screen">
 			<span>粉丝数量：</span>
 			<ul @click="change_bc($event),get_num($event)">
-				<li class="active">小于1万</li>
-				<li>1万～5万</li>
-				<li>5万～10万</li>
-				<li>大于10万</li>
+				<li class="active" value="0">小于10万</li>
+				<li value="1">10万～50万</li>
+				<li value="2">50万～100万</li>
+				<li value="3">大于100万</li>
 			</ul>
 			<br />
 			<span>用户标签：</span>
@@ -25,10 +25,10 @@
 
 			<span>时间筛选：</span>
 			<ul @click="change_bc($event),get_date($event)">
-				<li class="active">近3日</li>
-				<li>近7日</li>
-				<li>近10日</li>
-				<li>近30日</li>
+				<li class="active" value="3">近3日</li>
+				<li value="7">近7日</li>
+				<li value="10">近10日</li>
+				<li value="30">近30日</li>
 			</ul>
 
 
@@ -37,7 +37,7 @@
 
 		<div class="content">
 			<div class="result">
-				<span> 根据您的条件，为您筛选出<span class="num">1230</span>条舆情</span>
+				<span> 根据您的条件，为您筛选出<span class="num">{{user_list.length}}</span>个相关用户</span>
 				<input type="text" placeholder="请输入关键字">
 				<button class="glyphicon glyphicon-search search"></button>
 				<span ></span>
@@ -52,11 +52,11 @@
 					<tr>
 						<th>序号</th>
 						<th>微博名称</th>
-						<th>性别</th>
 						<th>简介</th>
+						<th>地址</th>
 						<th>粉丝数量</th>
 						<th>标签</th>
-						<th>文章数量</th>
+						<th>微博数量</th>
 					</tr>
 					<span ></span>
 					<tr v-if="user_list.length==0">
@@ -71,11 +71,11 @@
 					<tr v-for='(user,index) in show_list' :key="index">
 						<td>{{index}}</td>
 						<td>{{user.name}}</td>
-						<td>{{user.sex}}</td>
-						<td>{{user.introduction}}</td>
-						<td>{{user.fens_num}}</td>
+						<td>{{user.profile}}</td>
+						<td>{{user.address}}</td>
+						<td>{{user.fans_num}}</td>
 						<td>{{user.label}}</td>
-						<td>{{user.article}}</td>
+						<td>{{user.micro_blog_num}}</td>
 					</tr>
 				</table>
 
@@ -97,20 +97,15 @@
 					<tr>
 						<th>序号</th>
 						<th>微博名称</th>
-						<th>文章详情</th>
+						<th>微博详情</th>
 						<th>时间</th>
-						<th>点赞数</th>
-						<th>评论数</th>
-						<th>转发量</th>
 					</tr>
 					<tr v-for='(con,index) in show_con' :key="index">
 						<td>{{index}}</td>
-						<td>{{con.name}}</td>
-						<td>{{con.content}}</td>
+						<td>{{con.user_name}}</td>
+						<td>{{con.content.slice(0,20)}}</td>
 						<td>{{con.time}}</td>
-						<td>{{con.like_num}}</td>
-						<td>{{con.comment_num}}</td>
-						<td>{{con.forward_num}}</td>
+						<td><a href="#" @click="view_details(con.fields.content)">详情</a></td>
 					</tr>
 				</table>
 
@@ -119,7 +114,7 @@
 					background
 					:hide-on-single-page='true'
 					:page-size="pagesize"
-					@current-change="handleCurrentChange"
+					@current-change="handleCurrentChange2"
 					:current-page="currentPage"
 					layout="total,prev, pager, next, jumper"
 					:total="con_list.length">
@@ -131,12 +126,16 @@
 	</div>
 </template>
 
+<script ></script>
 <script>
+	import VueEvent from "../model/VueEvent.js" // 引入广播实例
+	import storage from "../model/storage.js" 
+
 	export default {
 	data(){
 		return{
 			currentPage:1,  //初始页
-			pagesize:1,  //每页的数据
+			pagesize:10,  //每页的数据
 			show_list:[],
 			user_list:[],
 			con_list:[],
@@ -150,16 +149,29 @@
 			],
 			li_index:[],
 			seen:false,
-			date_list:["近3日","近7日","近10日","近30日"],
-			num_list:["小于1万","1万～5万","5万～10万","大于10万"],
+
 			condition:{
-				sel_num: "小于1万",
-				sel_date:"近3日",
+				sel_num: "0",
+				sel_time:"3",
 				category:"明星"
 			},
 			user_seen:true,
 			weibo_seen:false,
+			if_screened:false,  // 判断是否进行了筛选
 		}
+	},
+	mounted(){
+		var user_list = storage.get('user_list');
+		if(user_list){
+			this.user_list = user_list;
+			this.show_list=this.user_list.slice(0,this.pagesize);					
+		};
+
+		var con_list = storage.get('con_list');
+		if(con_list){
+			this.con_list = con_list;
+			this.show_con=this.con_list.slice(0,this.pagesize);
+		};
 	},
 	methods: {
 		set_condition(e,n){
@@ -184,13 +196,13 @@
 			e.target.style.backgroundColor = "rgb(84,192,110)";
 		},
 		get_num(e){
-			this.condition.sel_num=e.target.innerHTML
+			this.condition.sel_num=e.target.getAttribute("value")
 		},
 		get_category(e){
-			this.condition.category=e.target.innerHTML
+			this.condition.category=e.target.getAttribute("value")
 		},	
 		get_date(e){
-			this.condition.sel_date=e.target.innerHTML
+			this.condition.sel_date=e.target.getAttribute("value")
 		},
 		show_user(){
 			this.weibo_seen=false;
@@ -201,13 +213,27 @@
 			this.weibo_seen=true
 		},
 		screen(){
-			alert("您选择的条件为："+this.condition.sel_num+","+this.condition.category+","+this.condition.sel_date+"\n正在为您筛选，请稍等......");
-			this.$axios.get("api/data")
+			alert("您选择的条件为："+this.condition.sel_num+","+this.condition.category+","+this.condition.sel_time+"\n正在为您筛选，请稍等......");
+			
+			this.$axios.get("api/data",
+				{params: {
+					num: this.condition.sel_num,
+					category: this.condition.category,
+					time:this.condition.sel_time}
+				})
 				.then(response => {
-					this.user_list = (response.data.message);
+					// this.user_list = JSON.parse(response.data.message);
+					this.user_list = (response.data.user);
 					this.show_list=this.user_list.slice(0,this.pagesize);
-					this.con_list = (response.data.con);
+
+					this.con_list = (response.data.con);	
 					this.show_con=this.con_list.slice(0,this.pagesize);
+					this.if_screened=true; // 请求成功后将if_scrrened设置为True
+
+					//将数据持久化保存
+					storage.set('user_list', this.user_list);
+					storage.set('con_list', this.con_list);
+					storage.set('if_screened', this.if_screened);  
 				}).catch(err => {                 //请求失败后的处理函数
 					console.log(err)
 				});
@@ -226,6 +252,31 @@
 				}
 				this.show_list = tablist
 			}
+		},
+
+		handleCurrentChange2(val) {
+			// 跳转页数
+			//获取当前页
+			let index = this.pagesize * (val -1);
+			//获取总数
+			let allData = this.pagesize * val;
+			
+			let tablist=[];
+			for(let i = index;i<allData;i++) {
+				if (this.con_list[i]) {
+					tablist.push(this.con_list[i])
+				}
+				this.show_con = tablist
+			}
+		},
+		view_details(val){
+			alert(val)
+		}
+	},
+	// 在组件销毁前发送广播
+	beforeDestroy(){
+		if(this.if_screened==true){
+			VueEvent.$emit('if_screened',true);
 		}
 	}
 }
@@ -263,8 +314,8 @@
 		border-left: 0px solid rgb(238,239,241);
 	}
 	.condition_screen li:hover{
-		color: #fff;
-		background-color: rgb(84,192,110);
+		color: #fff !important;
+		background-color: rgb(84,192,110) !important;;
 	}	
 	.condition_screen .active{
 		color: #fff;
@@ -378,7 +429,7 @@
 	.weibo_li table th{
 		text-align: center;
 		line-height: 38px;
-		width: 4%;
+		width: 20%;
 	}
 	.weibo_li table td{
 		text-align: center;
