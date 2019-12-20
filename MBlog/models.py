@@ -11,6 +11,7 @@ class MicroBlogUser(models.Model):
     profile = models.CharField(max_length=100, verbose_name='简介')
     address = models.CharField(max_length=50, verbose_name='地址')
     label = models.CharField(max_length=50, verbose_name='标签')
+    category = models.CharField(max_length=10, verbose_name='分类')
 
     class Meta:
         ordering = ['-id']

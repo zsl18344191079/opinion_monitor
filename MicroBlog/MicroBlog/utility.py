@@ -31,9 +31,9 @@ def select_pattern(flag):
             r'<div class="WB_expand S_bg1" node-type="feed_list_forwardContent">(.*?)'
             r'<div class="WB_expand_media_box')
         # 别人
-        fi = re.findall(r'<a suda-uatrack="key=feed_headnick.*?>(.*?)</a>')
+        fi = re.compile(r'<a suda-uatrack="key=feed_headnick.*?>(.*?)</a>')
         # 转发内容
-        fc = re.findall(r'<div class="WB_text" node-type="feed_list_reason">(.*?)</div>')
+        fc = re.compile(r'<div class="WB_text" node-type="feed_list_reason">(.*?)</div>')
         # 微博时间
         tm = re.compile(r'<div class="WB_from S_txt2">.*?<a name=.*?>(.*?)</a>')
         # 转发数
@@ -50,7 +50,7 @@ def analyse(i, flag):
     # 微博
     micro_blog = mb.findall(i)
     micro_blog = re.sub('<.*?>', '', micro_blog[0]).replace(r'\n', '').replace('&nbsp;', '').strip().replace(
-        '\u200b', '').replace(r'\\', '\\')
+        '\u200b', '').replace(r'\\', '')
 
     # 转发别人的微博
     forward_micro_blog = fmb.findall(i)
