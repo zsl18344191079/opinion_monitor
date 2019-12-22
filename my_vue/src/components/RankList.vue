@@ -20,11 +20,10 @@
 				<span><a @click="show_u()">相关用户</a></span>
 				<br>	
 
-				<span v-if="user_list.data=='none'" style="margin-left:410px">暂无数据，请先筛选数据！</span>
-				<div id="myChart" style="width:850px;height:450px;margin-left:50px" v-show="user_list.data!='none' &&show_echar"></div>
-				<user-list v-show="show_use&&user_list.data!='none'"
-					:userli="user_list"
-					:conli="con_list"
+				<span v-if="user_list.length==0" style="margin-left:410px">暂无数据，请先筛选数据！</span>
+				<div id="myChart" style="width:850px;height:450px;margin-left:50px" v-show="user_list.length!=0 &&show_echar"></div>
+				<user-list v-show="show_use && user_list.length!=0"
+					:condata="con_data"
 				></user-list>		
 			</div>	 			
 		</div> 
@@ -43,9 +42,9 @@ export default {
 			ref2:false,
 			show_echar:true,
 			show_use:false,
-			user_list:{data:"none"}, //用户
+			user_list:[], //用户
 			data_list:[], //用户相关数据（eg:影响力、活跃度）
-			con_list:{}, //用户微博
+			con_data:{}, //用户微博
 		}
 	},
 	props:{
@@ -93,7 +92,7 @@ export default {
 		},
 		refresh(){
 			if(!this.if_screened){
-				alert("暂无数据，请先筛选数据！")
+				alert("暂无数据,请先筛选数据！")
 			}else{
 				this.ref1=false
 				this.ref2=true
@@ -115,10 +114,20 @@ export default {
 		async getData(){
 			await this.$axios.get(this.url,{params: {screen: this.screen,}})
 				.then(response => {
-					this.user_list = (response.data.user_li);
-					this.data_list = (response.data.data_li);
-					this.con_list = (response.data.con);
-
+					var con_rank = (response.data.con_rank);
+					// 处理内容过长的情况
+					for(var i=0;i<con_rank.length;i++){
+						if(con_rank[i].length>20){
+							this.user_list.push(con_rank[i].replace(/\s+/g,"").slice(0, 10)+"....")
+						}else{
+							this.user_list.push(con_rank[i])
+						}
+					}
+					
+					// this.user_list = (response.data.con_rank);
+					this.data_list = (response.data.data_rank);
+					this.con_data = (response.data.con_data);
+					
 					// storage.set('rank_user', this.user_list);
 					// storage.set('rank_data', this.data_list);
 					// storage.set('rank_con', this.con_list);
@@ -126,7 +135,7 @@ export default {
 					console.log(err)
 				});
 
-			this.drawPicture(this.user_list.name, this.data_list)
+			this.drawPicture(this.user_list, this.data_list)
 		},
 	},
 }

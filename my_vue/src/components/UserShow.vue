@@ -2,15 +2,15 @@
 	<div class="show_user_list">
 		<div class="user_show_li">
 			<ul>
-				<li v-for="(name,index) in userli.name" :key="name" @click="change_con(name)">
-					<img :src="userli.personal_head[index]">
+				<li v-for="(name,index) in condata.name" :key="name" @click="change_con(name)">
+					<img :src="condata.personal_head[index]">
 					<span >{{name}}</span>
 				</li>
 			</ul>
 		</div>
-		<div class="con_show">
+		<div class="con_show" v-if='user_name!=""'>
 			<ul>
-				<li v-for="(con,index) in conli[user_name]" :key="index">
+				<li v-for="(con,index) in condata.con[user_name]" :key="index">
 				<p>{{con.content}}</p>
 				<span>时间：{{con.time}}</span>
 				<span> 点赞数：{{con.like_num}}</span>
@@ -33,12 +33,8 @@ export default {
 		}
 	},
 	props:{
-		userli:Object,
-		conli:Object	
+		condata:Object,
 	},
-	components: {
-
-  },
 	methods:{
 		change_con(name){
 			this.user_name = name

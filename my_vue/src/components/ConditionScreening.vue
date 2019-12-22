@@ -202,7 +202,7 @@
 			this.condition.category=e.target.getAttribute("value")
 		},	
 		get_date(e){
-			this.condition.sel_date=e.target.getAttribute("value")
+			this.condition.sel_time=e.target.getAttribute("value")
 		},
 		show_user(){
 			this.weibo_seen=false;

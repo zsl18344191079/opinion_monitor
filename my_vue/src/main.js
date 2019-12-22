@@ -45,11 +45,15 @@ const router = new VueRouter({
 
 // 引入echarts
 import echarts from 'echarts'
+import 'echarts/map/js/china'
 
-import './plugins/element.js'
 Vue.prototype.$echarts = echarts
+// 引入中国地图
+import china from 'echarts/map/json/china.json'
+echarts.registerMap('china', china)
 
 // 引入element ui
+import './plugins/element.js'
 import ElementUI from 'element-ui' 
 // import 'element-ui/lib/theme-chalk/index.css' 
 

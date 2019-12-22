@@ -55,8 +55,8 @@ ROOT_URLCONF = 'opinion_monitor.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
-        # 'DIRS': ['wb_opinion/dist'],
+        # 'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': ['my_vue/dist'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -121,5 +121,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-# STATICFILES_DIRS = [os.path.join(BASE_DIR, 'wb_opinion/dist')]
+# STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'my_vue/dist/static')]
