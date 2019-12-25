@@ -1,0 +1,126 @@
+{% load User_tags %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <!--Bootstrap-->
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <!--Font Awesome 图标web link-->
+    <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
+    <!-- 标题栏logo-->
+    <link rel="icon" href="/static/images/logo.ico" type="image/x-icon">
+    <!-- 收藏夹logo-->
+    <link rel="shortcut icon" href="/static/images/logo.ico" type="image/x-icon">
+    {% block csslink %}要替换的css link{% endblock %}
+    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %} 要替换的标题 {% endblock %}</title>
+    <style type="text/css">
+        /*———————————————————————————————主体内容——————————————————————————————————*/
+        #section {
+            padding: 0;
+            margin-top: 0px;
+        }
+
+        .section-content {
+            margin-top: 10px;
+            position: relative;
+
+        }
+
+        .top {
+            width: 100%;
+            height: 62px;
+            background-color: #000;
+            color: #fff;
+            position: relative;
+        }
+
+        .top_le {
+            float: left;
+            margin: 18px;
+            font-weight: bold;
+        }
+
+        .top_le span {
+            font-size: 19px;
+        }
+
+        .top_le a {
+            text-decoration: none;
+            font-size: 16px;
+
+        }
+
+        .top_ri {
+            float: right;
+            margin: 18px;
+        }
+
+        .top_ri ul {
+            list-style: none;
+        }
+
+        .top_ri li {
+            font-size: 14px;
+            margin-left: 15px;
+            display: inline-block;
+        }
+
+        .top_ri li a {
+            text-decoration: none;
+            color: #fff;
+        }
+    </style>
+    {% block css %}
+        <style type="text/css"></style>
+    {% endblock %}
+</head>
+
+<body>
+<!--Start Header-->
+<div class="top">
+    <div class="top_le">
+        <a href="#"><span class="glyphicon glyphicon-fire"></span>微博舆情监控平台</a>
+    </div>
+
+    <div class="top_ri">
+        <ul>
+            <li><a href="#">登录</a></li>
+            <li>|</li>
+            <li><a href="#">注册</a></li>
+            <li>|</li>
+            <li><a href="#">帮助</a></li>
+            <li>|</li>
+            <li><a href="#">联系</a></li>
+        </ul>
+    </div>
+</div>
+<!--End Header -->
+
+<section class="container" id="section">
+    <div class="section-content">
+        {% block content %}
+            <div>要替换的内容</div>
+        {% endblock %}
+    </div>
+</section>
+<!--footer-->
+{#<footer class="footerbg fixed">#}
+{#    基于Django构建 © 2019#}
+{#    |#}
+{#    eosones&#8197;版权所有#}
+{#    |#}
+{#    <a href="http://www.miitbeian.gov.cn">粤ICP备19057936号</a>#}
+{#    |#}
+{#    托管于<a href="https://cloud.tencent.com/" title="tencent" target="_blank">&#8197;腾讯云主机</a>#}
+{#    |#}
+{#    <a href="/sitemap.xml" title="Sitemap" target="_blank">网站地图</a>#}
+{#    |#}
+{#    当前在线#}
+{#    {% get_online_count %}#}
+{#</footer>#}
+<script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+{% block js %} 要替换的js {% endblock %}
+</body>
+</html>
