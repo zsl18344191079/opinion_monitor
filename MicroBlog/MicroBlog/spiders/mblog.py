@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
 import re
+from datetime import datetime
 
 import scrapy
 
@@ -12,6 +13,7 @@ class MblogSpider(scrapy.Spider):
     name = 'mblog'
     allowed_domains = ['weibo.com']
     start_urls = ('https://weibo.com/',)
+    now_time = datetime.now()
 
     def parse(self, response):
         html = response.text
@@ -21,7 +23,7 @@ class MblogSpider(scrapy.Spider):
             r'href=\\"(.*?)\\" >.*?<span .*?>(.*?)<\\/span><\\/a>',
             html)
         # （地址，分类）
-        for url, category in find_lst:
+        for url, category in find_lst[:len(find_lst) // 2]:
             url = url.replace('\\', '')
             yield scrapy.Request(url=url, meta={'category': category}, callback=self.usr_list, dont_filter=True)
 
@@ -42,10 +44,6 @@ class MblogSpider(scrapy.Spider):
             label = re.findall(r'<div class=\\"info_relation\\">(.*?)<\\/div>', mod_info)
             # 简介
             profile = re.findall(r'<em class=\\"tit S_txt2\\">简介<\\/em><span>(.*?)<\\/span>', mod_info)[0]
-            # 错误页
-            error = re.findall(r'https://weibo.com/\?refer_flag=.*', href)
-            if error:
-                continue
             # 地址
             address = re.findall(r'<em class=\\"tit S_txt2\\">地址<\\/em><span>(.*?)<\\/span>', mod_info)[0]
 
@@ -55,7 +53,9 @@ class MblogSpider(scrapy.Spider):
                 'address': address,
                 'profile': profile,
                 'category': category,
-                'label': label[0] if label else ''
+                'label': label[0] if label else '',
+                'dont_redirect': True,
+                'handle_httpstatus_list': [302],
             }
             yield scrapy.Request(url=personal_url,
                                  meta=data,
@@ -68,6 +68,8 @@ class MblogSpider(scrapy.Spider):
             yield scrapy.Request(url=url, meta={'category': category}, callback=self.usr_list, dont_filter=True)
 
     def micro(self, response):
+        if response.status == 302:
+            return
         home_html = response.text
         name = response.meta['name']
         label = response.meta['label']
@@ -82,7 +84,6 @@ class MblogSpider(scrapy.Spider):
 
         # 关注，粉丝，微博数
         afm = re.findall(r'<strong class=\\".*?\\">(.*?)<\\/strong>', home_html)
-        print(afm)
 
         # 头像图片地址
         personal_head = re.findall(r'<p class=\\"photo_wrap\\">.*?<img src=\\"(.*?)\\".*?>', home_html)[0].replace('\\',
@@ -90,9 +91,9 @@ class MblogSpider(scrapy.Spider):
         user_item = MicroUserItem()
         user_item['category'] = category
         user_item['label'] = label
-        user_item['micro_blog_num'] = afm[2]
-        user_item['attention_num'] = afm[0]
-        user_item['fans_num'] = afm[1]
+        user_item['micro_blog_num'] = int(afm[2])
+        user_item['attention_num'] = int(afm[0])
+        user_item['fans_num'] = int(afm[1])
         user_item['address'] = address
         user_item['profile'] = profile
         user_item['personal_head'] = personal_head
@@ -104,11 +105,16 @@ class MblogSpider(scrapy.Spider):
             r'class=\\"WB_feed_repeat S_bg1\\" style=\\"display:none;\\">',
             home_html)
         for i in micro_blog_list:
-            data = analyse(i, 1)
-            if data['time'] is False:
+            data = analyse(i, 1, self.now_time)
+            if data is False:
                 time_flag += 1
                 continue
+            elif type(data) is str:
+                url = 'https:' + data
+                yield scrapy.Request(url=url, meta={'name': name}, callback=self.all_content, dont_filter=True)
+                continue
             item = MicroblogItem()
+            item['name'] = name
             item['time'] = data['time']
             item['content'] = data['micro_blog']
             item['forward_num'] = data['forward_num']
@@ -141,11 +147,16 @@ class MblogSpider(scrapy.Spider):
             json_data)
 
         for i in micro_blog_list:
-            data = analyse(i, 2)
-            if data['time'] is False:
+            data = analyse(i, 2, self.now_time)
+            if data is False:
                 time_flag += 1
                 continue
+            elif type(data) is str:
+                url = 'https:' + data
+                yield scrapy.Request(url=url, meta={'name': name}, callback=self.all_content, dont_filter=True)
+                continue
             item = MicroblogItem()
+            item['name'] = name
             item['time'] = data['time']
             item['content'] = data['micro_blog']
             item['forward_num'] = data['forward_num']
@@ -154,7 +165,7 @@ class MblogSpider(scrapy.Spider):
             item['forward_content'] = data['forward_micro_blog']
             yield item
 
-        if time_flag != 0:
+        if time_flag != 0 or len(micro_blog_list) == 1:
             return
         else:
             flag = response.meta['flag']
@@ -189,3 +200,17 @@ class MblogSpider(scrapy.Spider):
                 yield scrapy.Request(url=url, meta=data,
                                      callback=self.micro_next,
                                      dont_filter=True)
+
+    def all_content(self, response):
+        html = response.text
+        name = response.meta['name']
+        data = analyse(html, 1, self.now_time)
+        item = MicroblogItem()
+        item['name'] = name
+        item['time'] = data['time']
+        item['content'] = data['micro_blog']
+        item['forward_num'] = data['forward_num']
+        item['comment_num'] = data['comment_num']
+        item['like_num'] = data['like_num']
+        item['forward_content'] = data['forward_micro_blog']
+        yield item

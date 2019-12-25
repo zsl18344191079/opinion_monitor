@@ -31,17 +31,12 @@ from .items import MicroblogItem
 
 
 class MicroblogPipeline(object):
-    def __init__(self):
-        self.user = None
-
     def process_item(self, item, spider):
         # 判断item类型
         if isinstance(item, MicroUserItem):
             # 存库
             item.save()
-            # 保存当前user实例
-            self.user = MicroBlogUser.objects.get(name=item['name'])
         elif isinstance(item, MicroblogItem):
-            item['name'] = self.user
+            item['name'] = MicroBlogUser.objects.get(name=item['name'])
             item.save()
         return item

@@ -83,7 +83,7 @@ USERAGENT_LIST = [
 # Configure a delay for requests for the same website (default: 0)
 # See https://doc.scrapy.org/en/latest/topics/settings.html#download-delay
 # See also autothrottle settings and docs
-DOWNLOAD_DELAY = 3
+DOWNLOAD_DELAY = 1
 # The download delay setting will honor only one of:
 # CONCURRENT_REQUESTS_PER_DOMAIN = 16
 # CONCURRENT_REQUESTS_PER_IP = 16
@@ -97,13 +97,19 @@ COOKIES_ENABLED = False
 # Override the default request headers:
 DEFAULT_REQUEST_HEADERS = {
     'USER_AGENT': random.choice(USERAGENT_LIST),
-    'Cookie': 'SINAGLOBAL=4825617762149.843.1575592447310; '
-              'SUBP=0033WrSXqPxfM72-Ws9jqgMF55529P9D9WhmFaopQoNzTwQUccPC6GlN; _'
-              's_tentry=weibo.com; Apache=9403328788823.6.1575702727376; '
-              'ULV=1575702727635:3:3:3:9403328788823.6.1575702727376:1575640943535; '
-              'login_sid_t=736383cc82567d2ec31bd8f0db219c92; cross_origin_proto=SSL; '
-              'SUB=_2AkMqt_Bbf8NxqwJRmfgdzW7maIh_zgDEieKc6wGAJRMxHRl-yj9jqkhStRB6ATfetJm1AaiRcx1nmdhTU2lvFx5mZvPt; '
-              'YF-Page-G0=761bd8cde5c9cef594414e10263abf81|1575714669|1575714669'
+    'Cookie': 'SINAGLOBAL=4825617762149.843.1575592447310; un=16567346684; UOR=,,login.sina.com.cn; '
+              'login_sid_t=a4a282e8a4a46bacff66dff31dc2a855; cross_origin_proto=SSL; '
+              'Ugrow-G0=cf25a00b541269674d0feadd72dce35f; YF-V5-G0=f5a079faba115a1547149ae0d48383dc; '
+              '_s_tentry=-; Apache=3296277652160.9326.1576740740932; '
+              'ULV=1576740740990:14:14:4:3296277652160.9326.1576740740932:1576638283507; '
+              'WBtopGlobal_register_version=307744aa77dd5677; '
+              'SCF=Ai2evP5UhhoiA-1gZwAlcTjr5roDWYMj5VoTdpMvHC7TOoTv_PjX1xexnjzaPJSthhzGUP-uLdKcLUvlRbWAjw0.; '
+              'SUHB=0rr7dFUG9eKPys; SUBP=0033WrSXqPxfM72wWs9jqgMF55529P9D9WFDgxvEUDml1cjsxRENerry5JpVF02cSKqNe0BcSonX; '
+              'SUB=_2AkMqp_VadcPxrARSnPgWyWLmbolH-jyZcpysAn7uJhMyAxh87g0sqSVutBF-XJLeXn49Uwgm-Xf2mrQuA8VPpRB3;'
+              ' wb_view_log=1916*8891%261920*10801; wb_view_log_7340359424=1916*8891%261920*10801; '
+              'YF-Page-G0=96c3bfa80dc53c34a567607076bb434e|1576815278|1576815278; '
+              'webim_unReadCount=%7B%22time%22%3A1576815313374%2C%22dm_pub_total%22%3A0%2C%22chat'
+              '_group_client%22%3A0%2C%22allcountNum%22%3A0%2C%22msgbox%22%3A0%7D'
     # 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
     # 'Accept-Language': 'en',
 }
