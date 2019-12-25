@@ -24,7 +24,7 @@
 				<li><router-link to="/screen"><span class="glyphicon glyphicon-screenshot"></span> 条件筛选</router-link></li>
 				<li><router-link to="/daywc"><span class="glyphicon glyphicon-cloud"></span> 每日词云</router-link></li>
 				<li><router-link to="/weekwc"><span class="glyphicon glyphicon-cloud"></span> 每周词云</router-link></li>
-				<li><router-link to="/wctrend"><span class="glyphicon glyphicon-cloud"></span> 词云趋势</router-link></li>
+				<li><router-link to="/wctrend"><span class="glyphicon glyphicon-globe"></span> 人员分布</router-link></li>
 				<li><router-link to="/influence"><span class="glyphicon glyphicon-stats"></span> 影响力排行榜</router-link></li>
 				<li><router-link to="/activity"><span class="glyphicon glyphicon-stats"></span> 活跃度排行榜</router-link></li>
 				<li><router-link to="/pointpraise"><span class="glyphicon glyphicon-stats"></span> 点赞数排行榜</router-link></li>
