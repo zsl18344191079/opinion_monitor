@@ -25,6 +25,7 @@ class MicroBlog(models.Model):
     comment_num = models.IntegerField(verbose_name='评论数')
     like_num = models.IntegerField(verbose_name='点赞数')
     forward_content = models.TextField('转发微博内容', default='无')
+    mid = models.CharField(max_length=20, verbose_name='当前这条微博的id')
 
     class Meta:
         ordering = ['-time']
